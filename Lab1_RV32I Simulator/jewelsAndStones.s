@@ -47,6 +47,8 @@ main:
     jal ra, numJewelsInStones
     add s5, x0, a0
 
+# end of main 
+    j end_main
 
 # numJewelsInStones(char * jewels, char * stones) -> int
 # [varible definition]:
