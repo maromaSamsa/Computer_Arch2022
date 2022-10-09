@@ -1,16 +1,21 @@
 .data
+# ****************** ans_1 = 4 *******************
 jewels1:
     .string "aA"
     .byte 0 # end of string
 stones1: 
     .string "aaAAbB"
     .byte 0 # end of string
+
+# ****************** ans_2 = 3 *******************
 jewels2:
     .string "and"
     .byte 0 # end of string
 stones2: 
     .string "35678andy"
     .byte 0 # end of string
+
+# ****************** ans_3 = 7 *******************
 jewels3:
     .string "fSBEOL"
     .byte 0 # end of string
