@@ -20,31 +20,33 @@ stones3:
 
 .text
 main:
+# test 1
     la s1, jewels1
     la s2, stones1
 
     addi a1, s1, 0
     addi a2, s2, 0
     jal ra, numJewelsInStones
-    add s3, s3, a0
-    
+    add s3, x0, a0
+
+# test 2
     la s1, jewels2
     la s2, stones2
 
     addi a1, s1, 0
     addi a2, s2, 0
     jal ra, numJewelsInStones
-    add s4, s4, a0
+    add s4, x0, a0
     
+# test 3   
     la s1, jewels3
     la s2, stones3
 
     addi a1, s1, 0
     addi a2, s2, 0
     jal ra, numJewelsInStones
-    add s5, s5, a0
-    
-    nop
+    add s5, x0, a0
+
 
 # numJewelsInStones(char * jewels, char * stones) -> int
 # [varible definition]:
