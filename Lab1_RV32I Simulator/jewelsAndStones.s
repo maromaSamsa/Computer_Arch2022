@@ -76,14 +76,15 @@ numJewelsInStones:
 
 iterJewels: 
     lb t0, 0(a1)        # t0 = *jewels
+    lb t1, 0(s1)        # t1 = *currStones
     beq t0, x0, end_iterJewels
 iterStones:
-    lb t1, 0(s1)        # t1 = *currStones
     beq t1, x0, end_iterStones
     bne t0, t1, skip    # if (*jewels != *currStones), skip the next line
     addi a0, a0, 1      # ++ans
 skip:
     addi s1, s1, 1      # s1 = &(++currStones)
+    lb t1, 0(s1)        # t1 = *currStones
     j  iterStones
 end_iterStones:
     addi a1, a1, 1      # a1 = &(++jewels)
