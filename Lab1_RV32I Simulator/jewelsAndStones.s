@@ -65,7 +65,8 @@ main:
 # [in function scope we use 3 reg]:
 # s1 -> pointer holds currStones
 # t0 -> current char in jewels
-# t1 -> current char in stones
+# t1 -> current char in 4 stones
+# t3 -> current char in stones
 numJewelsInStones:
 # push save reg (s0) into stack
     addi sp, sp , -4
@@ -73,18 +74,38 @@ numJewelsInStones:
 
     addi a0, x0, 0      # ans = 0
     addi s1, a2, 0      # currStones = &stones
+    addi t6, x0, 0b11111111 # byte mask
 
 iterJewels: 
     lb t0, 0(a1)        # t0 = *jewels
-    lb t1, 0(s1)        # t1 = *currStones
+    lw t1, 0(s1)        # t1 = *currStones[1:4]
     beq t0, x0, end_iterJewels
 iterStones:
-    beq t1, x0, end_iterStones
-    bne t0, t1, skip    # if (*jewels != *currStones), skip the next line
-    addi a0, a0, 1      # ++ans
+    and t3, t6, t1       # t3 = *currStones[1]
+    beq t3, x0, end_iterStones
+    bne t0, t3, skip1    # if (*jewels != *currStones), skip
+    addi a0, a0, 1       # ++ans
+skip1:
+    srli t1, t1, 8
+    and t3, t6, t1
+    beq t3, x0, end_iterStones
+    bne t0, t3, skip2
+    addi a0, a0, 1
+skip2:
+    srli t1, t1, 8
+    and t3, t6, t1
+    beq t3, x0, end_iterStones
+    bne t0, t3, skip3
+    addi a0, a0, 1
+skip3:
+    srli t1, t1, 8
+    and t3, t6, t1
+    beq t3, x0, end_iterStones
+    bne t0, t3, skip
+    addi a0, a0, 1
 skip:
-    addi s1, s1, 1      # s1 = &(++currStones)
-    lb t1, 0(s1)        # t1 = *currStones
+    addi s1, s1, 4      # s1 = &(++currStones)
+    lw t1, 0(s1)        # t1 = *currStones
     j  iterStones
 end_iterStones:
     addi a1, a1, 1      # a1 = &(++jewels)
