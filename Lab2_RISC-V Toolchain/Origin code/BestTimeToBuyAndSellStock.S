@@ -64,16 +64,23 @@ Target:
         addi   a2,t4,0         # store the prices[i]-temp in t2
         j      count             
 printf:
-        addi    a0, a2,0          
-        li      a7, 1
+	li a0, 1	# stdout output = 1
+	addi sp, sp, -4
+	addi a2, a2, 48 # ascii code convert int to char
+	addi t0, x0, 10 # set t0 a bit mask
+	slli t0, t0, 8  # next byte of string is '\n'
+	or a2,a2,t0	# masking
+	sw a2, 0(sp)
+	mv a1, sp	# a1 is an int we want to print
+        addi    a2, x0, 2  # length of the string (char with newline)      
+        li      a7, 64	# "print string" syscall is 64 in rv32emu
         ecall                  # printf integer
-        la      a0,10   
-        li      a7,11
-        ecall                  # printf \n
+        addi sp, sp, 4
 end:
         addi    t2,t2,-1       # arr_count--
         beq     t2,t5,arr_2    # t2!=t5 jump to arr_2
         beq     t2,t6,arr_3    # t2!=t6 jump to arr_3
-        addi    x17,x0,10
+        addi    a7,x0,93	# "exit" syscall is 93 in rv32emu
+        addi	a0, x0, 0	# set ret to 0
         ecall                  # program stop
 
