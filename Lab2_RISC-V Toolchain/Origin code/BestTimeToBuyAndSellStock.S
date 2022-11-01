@@ -23,7 +23,7 @@ main:
 arr_1:  
         la     s1, arr1        # load arr1 address of prices in s1
         addi   a1, a1, 6       # store the size of prices in a1
-        jal    x1, maxProfit    # next instruction store in rd register 
+        jal    x1, maxProfit   # next instruction store in rd register 
 arr_2:  
         la     s1, arr2        # load arr2 address of prices in s1
         addi   t0, x0, 0       # initialize t0
@@ -64,17 +64,17 @@ Target:
         addi   a2,t4,0         # store the prices[i]-temp in t2
         j      count             
 printf:
-	li a0, 1	# stdout output = 1
+	addi a0, x0, 1	        # stdout output = 1
 	addi sp, sp, -4
-	addi a2, a2, 48 # ascii code convert int to char
-	addi t0, x0, 10 # set t0 a bit mask
-	slli t0, t0, 8  # next byte of string is '\n'
-	or a2,a2,t0	# masking
+	addi a2, a2, 48         # ascii code convert int to char
+	addi t0, x0, 10         # set t0 a bit mask
+	slli t0, t0, 8          # next byte of string is '\n'
+	or a2,a2,t0	        # masking
 	sw a2, 0(sp)
-	mv a1, sp	# a1 is an int we want to print
-        addi    a2, x0, 2  # length of the string (char with newline)      
-        li      a7, 64	# "print string" syscall is 64 in rv32emu
-        ecall                  # printf integer
+	mv a1, sp	        # a1 is an int we want to print
+        addi    a2, x0, 2       # length of the string (char with newline)      
+        li      a7, 64	        # "print string" syscall is 64 in rv32emu
+        ecall                   # printf integer
         addi sp, sp, 4
 end:
         addi    t2,t2,-1       # arr_count--
