@@ -22,7 +22,9 @@ main:
         addi   t6, t6, 1       #arr_3
 arr_1:  
         la     s1, arr1        # load arr1 address of prices in s1
-        addi   a1, a1, 6       # store the size of prices in a1
+        addi   t0, x0, 0       # initialize t0
+        addi   a2, x0, 0       # initialize a2
+        addi   a1, x0, 6       # store the size of prices in a1
         jal    x1, maxProfit   # next instruction store in rd register 
 arr_2:  
         la     s1, arr2        # load arr2 address of prices in s1
