@@ -9,8 +9,8 @@ LDFLAGS = --oformat=elf32-littleriscv
 
 all: my_asm.elf
 
-my_asm.elf: BestTimeToBuyAndSellStock.s
-	$(CROSS_COMPILE)gcc $(ASFLAGS) -o my_asm.elf BestTimeToBuyAndSellStock.s
+my_asm.elf: my_asm.s
+	$(CROSS_COMPILE)gcc $(ASFLAGS) -o my_asm.elf my_asm.s
 	
 clean:
 	$(RM) my_asm.elf
