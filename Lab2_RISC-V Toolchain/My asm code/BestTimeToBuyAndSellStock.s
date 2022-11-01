@@ -6,20 +6,7 @@ arr2:    .word 1,1,3,4
 arr3:    .word 7,5,4,3,2
 
 .text
-#t0 = i
-#t1 = temp
-#t2 = arr_count=3
-#t3 = arr[i] t3
-#t4 = arr[i]-temp t4
-#t5 = arr_2
-#t6= arr_3
-#a1 =size
-#a2 =target 
-
 main:  
-        addi   t2, t2, 3       #arr_1
-        addi   t5, t5, 2       #arr_2
-        addi   t6, t6, 1       #arr_3
 arr_1:  
         la     s1, arr1        # load arr1 address of prices in s1
         addi   t0, x0, 0       # initialize t0
