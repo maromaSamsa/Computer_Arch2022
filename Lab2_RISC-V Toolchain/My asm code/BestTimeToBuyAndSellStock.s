@@ -10,16 +10,25 @@ main:
 arr_1:  
         la     a1, arr1        # load arr1 address of prices in a1
         addi   a2, x0, 6       # store the size of prices in a2
-        jal    ra, maxProfit   # next instruction store in rd register 
+	jal    ra, maxProfit   # next instruction store in rd register 
+	
+	mv     a2, a0
+	jal    ra, printf 
 arr_2:  
-        la     a1, arr2        # load arr1 address of prices in a1
+        la     a1, arr2        # load arr2 address of prices in a1
         addi   a2, x0, 4       # store the size of prices in a2
         jal    ra, maxProfit   # next instruction store in rd register 
+
+	mv     a2, a0
+	jal    ra, printf
+
 arr_3:
-        la     a1, arr1        # load arr1 address of prices in a1
+        la     a1, arr3        # load arr3 address of prices in a1
         addi   a2, x0, 5       # store the size of prices in a2
         jal    ra, maxProfit   # next instruction store in rd register 
 
+	mv     a2, a0
+	jal    ra, printf
 end:
         addi    a7, x0, 93	# "exit" syscall is 93 in rv32emu
         addi	a0, x0, 0	# set ret to 0
@@ -49,13 +58,13 @@ maxProfit:
         lw     t2, 0(a1)       # load the prices[i] in t2
 for_loop: 
         bge    t0, a2, end_maxProfit  # t0 >= a2 jump end
-        bge    t1, t2, else    # !(buy >= price[i]), jump to else
+        bge    t1, t2, else    # (buy >= price[i]), jump to else
         sub    t3, t2, t1      # temp = price[i] - buy
         bge    a0, t3, iter    # profit >= temp, jump to iter
         mv     a0, t3          # else, profit = temp
         j iter                 # 
 else:
-        addi   t1, t3, 0       # else temp = arr[i]
+        addi   t1, t2, 0       # buy = prices[i]
 iter: 
         addi   t0, t0, 1       # ++i
         addi   a1,a1,4         # *(prices++)   
