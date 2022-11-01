@@ -7,16 +7,16 @@ include ../toolchain.mk
 ASFLAGS = -march=rv32i -mabi=ilp32
 LDFLAGS = --oformat=elf32-littleriscv
 
-all: output.elf
+all: my_asm.elf
 
-output.elf: BestTimeToBuyAndSellStock.s
-	$(CROSS_COMPILE)gcc $(ASFLAGS) -o output.elf BestTimeToBuyAndSellStock.s
+my_asm.elf: BestTimeToBuyAndSellStock.s
+	$(CROSS_COMPILE)gcc $(ASFLAGS) -o my_asm.elf BestTimeToBuyAndSellStock.s
 	
 clean:
-	$(RM) output.elf
+	$(RM) my_asm.elf
 
 elfhead:
-	$(CROSS_COMPILE)readelf -h output.elf
+	$(CROSS_COMPILE)readelf -h my_asm.elf
 	
 elfsize:
-	$(CROSS_COMPILE)size output.elf
+	$(CROSS_COMPILE)size my_asm.elf
