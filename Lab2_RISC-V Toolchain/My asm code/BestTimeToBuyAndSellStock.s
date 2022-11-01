@@ -20,6 +20,10 @@ arr_3:
         addi   a2, x0, 5       # store the size of prices in a2
         jal    ra, maxProfit   # next instruction store in rd register 
 
+end:
+        addi    a7, x0, 93	# "exit" syscall is 93 in rv32emu
+        addi	a0, x0, 0	# set ret to 0
+        ecall                  # program stop
 
 # int maxProfit(int *prices, int)
 # algo {
@@ -73,11 +77,4 @@ printf:
         li      a7, 64	        # "print string" syscall is 64 in rv32emu
         ecall                   # printf integer
         addi sp, sp, 4
-end:
-        addi    t2,t2,-1       # arr_count--
-        beq     t2,t5,arr_2    # t2!=t5 jump to arr_2
-        beq     t2,t6,arr_3    # t2!=t6 jump to arr_3
-        addi    a7,x0,93	# "exit" syscall is 93 in rv32emu
-        addi	a0, x0, 0	# set ret to 0
-        ecall                  # program stop
 
