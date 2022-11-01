@@ -8,23 +8,18 @@ arr3:    .word 7,5,4,3,2
 .text
 main:  
 arr_1:  
-        la     s1, arr1        # load arr1 address of prices in s1
-        addi   t0, x0, 0       # initialize t0
-        addi   a2, x0, 0       # initialize a2
-        addi   a1, x0, 6       # store the size of prices in a1
-        jal    x1, maxProfit   # next instruction store in rd register 
+        la     a1, arr1        # load arr1 address of prices in a1
+        addi   a2, x0, 6       # store the size of prices in a2
+        jal    ra, maxProfit   # next instruction store in rd register 
 arr_2:  
-        la     s1, arr2        # load arr2 address of prices in s1
-        addi   t0, x0, 0       # initialize t0
-        addi   a2, x0, 0       # initialize a2
-        addi   a1, x0, 4       # store the size of prices in a1
-        jal    x1, maxProfit    # next instruction store in rd register  
+        la     a1, arr2        # load arr1 address of prices in a1
+        addi   a2, x0, 4       # store the size of prices in a2
+        jal    ra, maxProfit   # next instruction store in rd register 
 arr_3:
-        la     s1, arr3        # load arr2 address of prices in s1
-        addi   t0, x0, 0       # initialize t0
-        addi   a2, x0, 0       # initialize a2
-        addi   a1, x0, 5       # store the size of prices in a1
-        jal    x1, maxProfit    # next instruction store in rd register 
+        la     a1, arr1        # load arr1 address of prices in a1
+        addi   a2, x0, 5       # store the size of prices in a2
+        jal    ra, maxProfit   # next instruction store in rd register 
+
 
 # int maxProfit(int *prices, int)
 # algo {
