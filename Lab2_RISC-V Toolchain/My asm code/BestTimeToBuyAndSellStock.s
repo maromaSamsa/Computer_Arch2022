@@ -38,33 +38,46 @@ arr_3:
         addi   a2, x0, 0       # initialize a2
         addi   a1, x0, 5       # store the size of prices in a1
         jal    x1, maxProfit    # next instruction store in rd register 
+
+# int maxProfit(int *prices, int)
+# algo {
+#       init var buy = prices[0]
+#       init var profit = 0
+#       iter prices[i]{
+#               if prices[i] > buy {
+#                      var temp = prices[i] - buy
+#                      profit =  (temp > profit) ? temp : (nop)
+#               } else {
+#                       buy = price[i]
+#               }
+#       }
+#       return profit
+# }
+# a0: ret profit, a1: *prices, a2: length of prices
+# t0: i'th price currently, t1: buy price, t2: price[i], t3: temp
 maxProfit: 
-        addi   t0, t0,1        # store the 1 in t0
-        lw     t1, 0(s1)       # load the prices[0] in t1 
-        addi   s1,s1,4         # *(prices++)
-        lw     t3, 0(s1)       # load the arr[1] in t3 
-        jal    for_loop
+        lw     t1, 0(a1)       # load the prices[0] in t1 
+        addi   a0, x0, 0       # set profit = 0
+        addi   t0, x0, 1       # set iter i = 1, that is, start from prices[1]
+        addi   a1, a1, 4       # *(prices++)
+        lw     t2, 0(a1)       # load the prices[i] in t2
 for_loop: 
-        bge    t0, a1, printf  # t0>=a1 jump end
-        blt    t1, t3, if      # t3 > t1 jump to if
+        bge    t0, a2, end_maxProfit  # t0 >= a2 jump end
+        bge    t1, t2, else    # !(buy >= price[i]), jump to else
+        sub    t3, t2, t1      # temp = price[i] - buy
+        bge    a0, t3, iter    # profit >= temp, jump to iter
+        mv     a0, t3          # else, profit = temp
+        j iter                 # 
+else:
         addi   t1, t3, 0       # else temp = arr[i]
-        addi   t0, t0, 1       # i++
-        addi   s1,s1,4         # *(prices++)   
-        lw     t3,0(s1)        # load the arr[i]
-        j      for_loop
-if:
-        sub    t4,t3,t1        # arr[i]-temp
-        bge    t4,a2,Target    # t4 >= a2 jump to Target
-        addi   t4,t4,0         # else target=target
-       
-count: 
-        addi   t0, t0, 1       # i++
-        addi   s1,s1,4         # *(prices++)   
-        lw     t3,0(s1)        # load the arr[i]  
-        j      for_loop
-Target:
-        addi   a2,t4,0         # store the prices[i]-temp in t2
-        j      count             
+iter: 
+        addi   t0, t0, 1       # ++i
+        addi   a1,a1,4         # *(prices++)   
+        lw     t2,0(a1)        # load the prices[i] in t2
+        j      for_loop   
+end_maxProfit: 
+        ret
+                    
 printf:
 	addi a0, x0, 1	        # stdout output = 1
 	addi sp, sp, -4
