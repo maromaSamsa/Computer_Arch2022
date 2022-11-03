@@ -12,23 +12,23 @@ arr_1:
         addi   a2, x0, 6       # store the size of prices in a2
 	jal    ra, maxProfit   # next instruction store in rd register 
 	
-	mv     a2, a0
-	jal    ra, printf 
+	# mv     a2, a0
+	# jal    ra, printf 
 arr_2:  
         la     a1, arr2        # load arr2 address of prices in a1
         addi   a2, x0, 4       # store the size of prices in a2
         jal    ra, maxProfit   # next instruction store in rd register 
 
-	mv     a2, a0
-	jal    ra, printf
+	# mv     a2, a0
+	# jal    ra, printf
 
 arr_3:
         la     a1, arr3        # load arr3 address of prices in a1
         addi   a2, x0, 5       # store the size of prices in a2
         jal    ra, maxProfit   # next instruction store in rd register 
 
-	mv     a2, a0
-	jal    ra, printf
+	# mv     a2, a0
+	# jal    ra, printf
 end:
         addi    a7, x0, 93	# "exit" syscall is 93 in rv32emu
         addi	a0, x0, 0	# set ret to 0
@@ -71,8 +71,7 @@ iter:
         lw     t2,0(a1)        # load the prices[i] in t2
         j      for_loop   
 end_maxProfit: 
-        ret
-                    
+        mv     a2, a0              
 printf:
 	addi a0, x0, 1	        # stdout output = 1
 	addi sp, sp, -4
@@ -86,4 +85,5 @@ printf:
         li      a7, 64	        # "print string" syscall is 64 in rv32emu
         ecall                   # printf integer
         addi sp, sp, 4
+        ret
 
