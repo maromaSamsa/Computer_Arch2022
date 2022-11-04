@@ -7,13 +7,16 @@ include ../toolchain.mk
 ASFLAGS = -march=rv32i -mabi=ilp32
 LDFLAGS = --oformat=elf32-littleriscv
 
-all: my_asm.elf
+all: my_asm.elf gdb_my_asm.elf
+
+gdb_my_asm.elf: my_asm.s
+	$(CROSS_COMPILE)gcc $(ASFLAGS) -g -o gdb_my_asm.elf my_asm.s
 
 my_asm.elf: my_asm.s
 	$(CROSS_COMPILE)gcc $(ASFLAGS) -o my_asm.elf my_asm.s
 	
 clean:
-	$(RM) my_asm.elf
+	$(RM) my_asm.elf gdb_my_asm.elf
 
 elfhead:
 	$(CROSS_COMPILE)readelf -h my_asm.elf
