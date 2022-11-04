@@ -1,9 +1,9 @@
 .global main
 
 .data
-arr1:    .word 7,1,5,3,6,4
-arr2:    .word 1,1,3,4
-arr3:    .word 7,5,4,3,2
+arr1:    .byte 7, 1, 5, 3, 6, 4
+arr2:    .byte 1, 1, 3, 4
+arr3:    .byte 7, 5, 4, 3, 2
 
 .text
 main:  
@@ -49,26 +49,65 @@ end:
 #       return profit
 # }
 # a0: ret profit, a1: *prices, a2: length of prices
-# t0: i'th price currently, t1: buy price, t2: price[i], t3: temp
+# t0: i'th price currently, (t1, t4): buy price(1 word 4 byte, 1 byte), 
+# t2: price[i], t3: temp
+# s1: bitmask 0x000000ff
 maxProfit: 
         lw     t1, 0(a1)       # load the prices[0] in t1 
+        addi   s1, x0, 0xff
+        and    t4, t1, s1
         addi   a0, x0, 0       # set profit = 0
-        addi   t0, x0, 1       # set iter i = 1, that is, start from prices[1]
-        addi   a1, a1, 4       # *(prices++)
-        lw     t2, 0(a1)       # load the prices[i] in t2
+        addi   t0, x0, 0       # set iter i = 1, that is, start from prices[1]
 for_loop: 
-        bge    t0, a2, end_maxProfit  # t0 >= a2 jump end
-        bge    t1, t2, else    # (buy >= price[i]), jump to else
-        sub    t3, t2, t1      # temp = price[i] - buy
-        bge    a0, t3, iter    # profit >= temp, jump to iter
+        addi   t0, t0, 1
+        and    t2, t1, s1
+        blt    a2, t0, end_maxProfit  # a2 < t0 jump end
+        bge    t4, t2, else    # (buy >= price[i]), jump to else
+        sub    t3, t2, t4      # temp = price[i] - buy
+        bge    a0, t3, l2      # profit >= temp, jump to iter
         mv     a0, t3          # else, profit = temp
-        j iter                 # 
+        j l2
 else:
-        addi   t1, t2, 0       # buy = prices[i]
+        addi   t4, t2, 0       # buy = prices[i]
+l2:
+        srli   t1, t1, 8
+        addi   t0, t0, 1
+        and    t2, t1, s1
+        blt    a2, t0, end_maxProfit  # a2 < t0 jump end
+        bge    t4, t2, else2   # (buy >= price[i]), jump to else
+        sub    t3, t2, t4      # temp = price[i] - buy
+        bge    a0, t3, l3      # profit >= temp, jump to iter
+        mv     a0, t3          # else, profit = temp
+        j l3
+else2:
+        addi   t4, t2, 0       # buy = prices[i]
+l3:
+        srli   t1, t1, 8
+        addi   t0, t0, 1
+        and    t2, t1, s1
+        blt    a2, t0, end_maxProfit  # a2 < t0 jump end
+        bge    t4, t2, else3   # (buy >= price[i]), jump to else
+        sub    t3, t2, t4      # temp = price[i] - buy
+        bge    a0, t3, l4      # profit >= temp, jump to iter
+        mv     a0, t3          # else, profit = temp
+        j l4
+else3:
+        addi   t4, t2, 0       # buy = prices[i]
+l4:
+        srli   t1, t1, 8
+        addi   t0, t0, 1
+        and    t2, t1, s1
+        blt    a2, t0, end_maxProfit  # a2 < t0 jump end
+        bge    t4, t2, else4   # (buy >= price[i]), jump to else
+        sub    t3, t2, t4      # temp = price[i] - buy
+        bge    a0, t3, iter      # profit >= temp, jump to iter
+        mv     a0, t3          # else, profit = temp
+        j iter
+else4:
+        addi   t4, t2, 0       # buy = prices[i]
 iter: 
-        addi   t0, t0, 1       # ++i
-        addi   a1,a1,4         # *(prices++)   
-        lw     t2,0(a1)        # load the prices[i] in t2
+        addi   a1, a1, 4
+        lw     t1, 0(a1)
         j      for_loop   
 end_maxProfit: 
         mv     a2, a0              
