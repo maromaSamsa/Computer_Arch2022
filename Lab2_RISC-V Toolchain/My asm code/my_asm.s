@@ -53,14 +53,14 @@ end:
 # t2: price[i], t3: temp
 # s1: bitmask 0x000000ff
 maxProfit: 
-        lw     t1, 0(a1)       # load the prices[0] in t1 
-        addi   s1, x0, 0xff
-        and    t4, t1, s1
+        lw     t1, 0(a1)       # load the prices[0:3] into t1 
+        addi   s1, x0, 0xff    # bitmask to get the first byte later
+        and    t4, t1, s1      # get the first byte of t1 (little endian)
         addi   a0, x0, 0       # set profit = 0
-        addi   t0, x0, 0       # set iter i = 1, that is, start from prices[1]
+        addi   t0, x0, 0       # set iter i = 0, that is, start from prices[0]
 for_loop: 
-        addi   t0, t0, 1
-        and    t2, t1, s1
+        addi   t0, t0, 1       # i'th for the next byte
+        and    t2, t1, s1      # get the first byte of t1 (little endian)
         blt    a2, t0, end_maxProfit  # a2 < t0 jump end
         bge    t4, t2, else    # (buy >= price[i]), jump to else
         sub    t3, t2, t4      # temp = price[i] - buy
@@ -69,10 +69,10 @@ for_loop:
         j l2
 else:
         addi   t4, t2, 0       # buy = prices[i]
-l2:
-        srli   t1, t1, 8
-        addi   t0, t0, 1
-        and    t2, t1, s1
+l2:                            # unrolling 2
+        srli   t1, t1, 8       # shift right 1 byte (8 bits)
+        addi   t0, t0, 1       # i'th for the next byte
+        and    t2, t1, s1      # get the second byte of t1 (little endian)
         blt    a2, t0, end_maxProfit  # a2 < t0 jump end
         bge    t4, t2, else2   # (buy >= price[i]), jump to else
         sub    t3, t2, t4      # temp = price[i] - buy
@@ -81,7 +81,7 @@ l2:
         j l3
 else2:
         addi   t4, t2, 0       # buy = prices[i]
-l3:
+l3:                            # unrolling 3
         srli   t1, t1, 8
         addi   t0, t0, 1
         and    t2, t1, s1
@@ -93,7 +93,7 @@ l3:
         j l4
 else3:
         addi   t4, t2, 0       # buy = prices[i]
-l4:
+l4:                            # unrolling 4
         srli   t1, t1, 8
         addi   t0, t0, 1
         and    t2, t1, s1
@@ -106,9 +106,9 @@ l4:
 else4:
         addi   t4, t2, 0       # buy = prices[i]
 iter: 
-        addi   a1, a1, 4
-        lw     t1, 0(a1)
-        j      for_loop   
+        addi   a1, a1, 4       # price += 4 
+        lw     t1, 0(a1)        # load 4 byte in once
+        j      for_loop
 end_maxProfit: 
         mv     a2, a0              
 printf:
