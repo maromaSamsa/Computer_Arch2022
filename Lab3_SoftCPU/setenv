@@ -1,0 +1,4 @@
+source /home/maromasamsa/riscv-none-elf-gcc/setenv
+export CROSS_COMPILE=riscv-none-elf-
+export VERILATOR_ROOT=$HOME/verilator
+export PATH=$VERILATOR_ROOT/bin:$PATH
