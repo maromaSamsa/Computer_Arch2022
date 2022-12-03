@@ -77,8 +77,47 @@ else:
         addi   t1, t2, 0       # buy = prices[i]
 iter: 
         addi   t0, t0, 1       # ++i
-        addi   a1,a1,4         # *(prices++)   
-        lw     t2,0(a1)        # load the prices[i] in t2
+        addi   a1, a1, 4       # *(prices++)   
+        lw     t2, 0(a1)       # load the prices[i] in t2
+for_loop2: 
+        bge    t0, a2, end_maxProfit  # t0 >= a2 jump end
+        bge    t1, t2, else2   # (buy >= price[i]), jump to else
+        sub    t3, t2, t1      # temp = price[i] - buy
+        bge    a0, t3, iter2   # profit >= temp, jump to iter
+        mv     a0, t3          # else, profit = temp
+        j iter2                # 
+else2:
+        addi   t1, t2, 0       # buy = prices[i]
+iter2: 
+        addi   t0, t0, 1       # ++i
+        addi   a1, a1, 4       # *(prices++)   
+        lw     t2, 0(a1)       # load the prices[i] in t2
+for_loop3: 
+        bge    t0, a2, end_maxProfit  # t0 >= a2 jump end
+        bge    t1, t2, else3   # (buy >= price[i]), jump to else
+        sub    t3, t2, t1      # temp = price[i] - buy
+        bge    a0, t3, iter3   # profit >= temp, jump to iter
+        mv     a0, t3          # else, profit = temp
+        j iter3                # 
+else3:
+        addi   t1, t2, 0       # buy = prices[i]
+iter3: 
+        addi   t0, t0, 1       # ++i
+        addi   a1, a1, 4       # *(prices++)   
+        lw     t2, 0(a1)       # load the prices[i] in t2
+for_loop4: 
+        bge    t0, a2, end_maxProfit  # t0 >= a2 jump end
+        bge    t1, t2, else4   # (buy >= price[i]), jump to else
+        sub    t3, t2, t1      # temp = price[i] - buy
+        bge    a0, t3, iter4   # profit >= temp, jump to iter
+        mv     a0, t3          # else, profit = temp
+        j iter4                # 
+else4:
+        addi   t1, t2, 0       # buy = prices[i]
+iter4: 
+        addi   t0, t0, 1       # ++i
+        addi   a1, a1, 4       # *(prices++)   
+        lw     t2, 0(a1)       # load the prices[i] in t2
         j      for_loop   
 end_maxProfit: 
         ret
