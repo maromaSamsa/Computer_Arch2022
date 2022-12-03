@@ -7,8 +7,6 @@ arr2:
 	.word 1,1,3,4
 arr3:    
 	.word 7,5,4,3,2
-strr: 	 
-	.string "hello"
 newline:    
 	.string "\n"
 iformat:    
