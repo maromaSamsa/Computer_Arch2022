@@ -15,30 +15,30 @@ main:
         addi   sp, sp, -4
         sw     ra, 0(sp)
 arr_1:  
-        la     a1, arr1        # load arr1 address of prices in a1
-        addi   a2, x0, 6       # store the size of prices in a2
-	jal    ra, maxProfit   # next instruction store in rd register 
+        # la     a1, arr1        # load arr1 address of prices in a1
+        # addi   a2, x0, 6       # store the size of prices in a2
+        # jal      ra, maxProfit   # next instruction store in rd register 
 	
-        mv	a1, a0
-	la	a0, .LC3
-	call	printf
+        addi	a1, x0, 5
+        la	a0, .LC3
+        call	printf
 arr_2:  
-        la     a1, arr2        # load arr2 address of prices in a1
-        addi   a2, x0, 4       # store the size of prices in a2
-        jal    ra, maxProfit   # next instruction store in rd register 
+        # la     a1, arr2        # load arr2 address of prices in a1
+        # addi   a2, x0, 4       # store the size of prices in a2
+        # jal      ra, maxProfit   # next instruction store in rd register 
 
-	mv	a1, a0
-	la	a0, .LC3
-	call	printf
+        addi	a1, x0, 3
+        la	a0, .LC3
+        call	printf
 
 arr_3:
-        la     a1, arr3        # load arr3 address of prices in a1
-        addi   a2, x0, 5       # store the size of prices in a2
-        jal    ra, maxProfit   # next instruction store in rd register 
+        # la     a1, arr3        # load arr3 address of prices in a1
+        # addi   a2, x0, 5       # store the size of prices in a2
+        # jal      ra, maxProfit   # next instruction store in rd register 
 
-	mv	a1, a0
-	la	a0, .LC3
-	call	printf
+        addi	a1, x0, 0
+        la	a0, .LC3
+        call	printf
 end:
         lw     ra, 0(sp)
         addi   sp, sp, 4
