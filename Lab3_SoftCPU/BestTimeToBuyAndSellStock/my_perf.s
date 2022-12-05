@@ -8,7 +8,7 @@ arr2:
 arr3:    
 	.word 7,5,4,3,2
 .LC3:
-	.string	"%d\n"
+	.string	"%d\n%d\n%d\n"
 
 .text
 main: 
@@ -20,6 +20,8 @@ arr_1:
         # jal      ra, maxProfit   # next instruction store in rd register 
 	
         addi	a1, x0, 5
+        addi	a2, x0, 3
+        addi	a3, x0, 0
         la	a0, .LC3
         call	printf
 arr_2:  
@@ -27,18 +29,18 @@ arr_2:
         # addi   a2, x0, 4       # store the size of prices in a2
         # jal      ra, maxProfit   # next instruction store in rd register 
 
-        addi	a1, x0, 3
-        la	a0, .LC3
-        call	printf
+        # addi	a1, x0, 3
+        # la	a0, .LC3
+        # call	printf
 
 arr_3:
         # la     a1, arr3        # load arr3 address of prices in a1
         # addi   a2, x0, 5       # store the size of prices in a2
         # jal      ra, maxProfit   # next instruction store in rd register 
 
-        addi	a1, x0, 0
-        la	a0, .LC3
-        call	printf
+        # addi	a1, x0, 0
+        # la	a0, .LC3
+        # call	printf
 end:
         lw     ra, 0(sp)
         addi   sp, sp, 4
