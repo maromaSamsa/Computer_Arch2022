@@ -30,7 +30,6 @@ initList:
     li      a0, 8
     call    malloc
     sw      t0, 0(a0)           # head->val = 1;
-    sw      zero, 4(a0)         # head->next = NULL;
     mv      s2, a0              # head get address
     mv      s3, a0              # tmp get head address
 
@@ -41,13 +40,13 @@ loop_add_node:
     li      a0, 8
     call    malloc              # malloc newNode
     sw      t0, 0(a0)           # newNode->next = i
-    sw      zero, 4(a0)         # head->next = NULL;
 
     sw      a0, 4(s3)           # tmp->next = newNode
     mv      s3, a0              # tmp = tmp->next
 
     j       loop_add_node
 end_initList:
+	sw		zero, 4(s3)
     mv      a0, s2
     lw      ra, 0(sp)
     addi    sp, sp, 4
