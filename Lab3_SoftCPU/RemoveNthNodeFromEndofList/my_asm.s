@@ -58,7 +58,7 @@ printList:
     addi    sp, sp, -12 
     sw      ra, 0(sp)
 	sw		s1, 4(sp)
-    sw		s2, 8(sp)
+	sw		s2, 8(sp)
 
     mv      s1, a0
 	mv		s2, a1
@@ -90,10 +90,49 @@ printList_else:
     addi    sp, sp, 12
     ret
 
-##	removeNthFromEnd(head, rm)
+## removeNthFromEnd(head, rm)
+## head ---> a0
+## rm ---> a1
+## len ---> t0
+## *iter ---> t1
+## *table[30] ---> n(sp) to n+12+4*30(sp) ---> t2
 removeNthFromEnd:
+	addi    sp, sp, -124 
+    sw      ra, 0(sp)
+
+	li		t0, 0
+	mv		t1, a0
+	addi	t2, sp, 4
+
+while_iter:
+	beq		t1, zero, remove_node
+
+	sw		t1, 0(t2)
+
+	lw		t1, 4(t1)
+	addi	t2, t2, 4
+	addi	t0, t0, 1
 	
+	j		while_iter
+remove_node:
+	beq		a1, t0, else
+	
+	sub		t0, t0, a1
+	li		t1, 4
+	mul		t0, t0, t1
+
+	add		t0, t0, sp
+	lw		t1, 8(t0)
+	lw		t0, 0(t0)
+	
+	sw		t1, 4(t0)
+
+	j end_removeNthFromEnd
+else:	
+	lw		a0, 8(sp)
 end_removeNthFromEnd:
+	lw      ra, 0(sp)
+    addi    sp, sp, 124
 	ret
 
 
@@ -113,6 +152,23 @@ main:
     li	    a1, 2
 	mv	    a0, s1
 	call	removeNthFromEnd
+
+	li		a1, 2
+    jal     printList
+
+	li	    a1, 4
+	mv	    a0, s1
+	call	removeNthFromEnd
+
+	li		a1, 4
+    jal     printList
+
+	li	    a1, 1
+	mv	    a0, s1
+	call	removeNthFromEnd
+
+	li		a1, 1
+    jal     printList
 
     sw      s1, 4(sp)
     lw      ra, 0(sp)
