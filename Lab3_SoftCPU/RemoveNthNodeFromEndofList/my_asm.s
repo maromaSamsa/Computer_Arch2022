@@ -43,7 +43,37 @@ loop_add_node:
 
     sw      a0, 4(s3)           # tmp->next = newNode
     mv      s3, a0              # tmp = tmp->next
+# URL1_init:
+	beq     s1, t0, end_initList
+    addi    t0, t0, 1           # i++
 
+    li      a0, 8
+    call    malloc              # malloc newNode
+    sw      t0, 0(a0)           # newNode->next = i
+
+    sw      a0, 4(s3)           # tmp->next = newNode
+    mv      s3, a0              # tmp = tmp->next
+# URL2_init:
+	beq     s1, t0, end_initList
+    addi    t0, t0, 1           # i++
+
+    li      a0, 8
+    call    malloc              # malloc newNode
+    sw      t0, 0(a0)           # newNode->next = i
+
+    sw      a0, 4(s3)           # tmp->next = newNode
+    mv      s3, a0              # tmp = tmp->next
+# URL3_init:
+	beq     s1, t0, end_initList
+    addi    t0, t0, 1           # i++
+
+    li      a0, 8
+    call    malloc              # malloc newNode
+    sw      t0, 0(a0)           # newNode->next = i
+
+    sw      a0, 4(s3)           # tmp->next = newNode
+    mv      s3, a0              # tmp = tmp->next
+	
     j       loop_add_node
 end_initList:
 	sw		zero, 4(s3)
@@ -66,6 +96,30 @@ printList:
     la      a0, LC0
     call    printf
 loop_print_node:
+	beq		s1, zero, end_printList
+
+	lw		a1, 0(s1)
+	la		a0, LC1
+	call	printf
+
+	lw		s1, 4(s1)
+# URL1_printList:
+	beq		s1, zero, end_printList
+
+	lw		a1, 0(s1)
+	la		a0, LC1
+	call	printf
+
+	lw		s1, 4(s1)
+# URL2_printList:
+	beq		s1, zero, end_printList
+
+	lw		a1, 0(s1)
+	la		a0, LC1
+	call	printf
+
+	lw		s1, 4(s1)
+# URL3_printList:
 	beq		s1, zero, end_printList
 
 	lw		a1, 0(s1)
@@ -111,7 +165,31 @@ while_iter:
 	lw		t1, 4(t1)
 	addi	t2, t2, 4
 	addi	t0, t0, 1
-	
+# URL1_iter:
+	beq		t1, zero, remove_node
+
+	sw		t1, 0(t2)
+
+	lw		t1, 4(t1)
+	addi	t2, t2, 4
+	addi	t0, t0, 1
+# URL2_iter:
+	beq		t1, zero, remove_node
+
+	sw		t1, 0(t2)
+
+	lw		t1, 4(t1)
+	addi	t2, t2, 4
+	addi	t0, t0, 1
+# URL3_iter:
+	beq		t1, zero, remove_node
+
+	sw		t1, 0(t2)
+
+	lw		t1, 4(t1)
+	addi	t2, t2, 4
+	addi	t0, t0, 1
+
 	j		while_iter
 remove_node:
 	beq		a1, t0, else
