@@ -192,45 +192,40 @@ float capsuleSDF(float px,
     int32_t by_fix = f2Q(by);
     int32_t r_fix = f2Q(r);
 
-    // float px_re = Q2f(px_fix);
-    // float py_re = Q2f(py_fix);
-    // float ax_re = Q2f(ax_fix);
-    // float ay_re = Q2f(ay_fix);
-    // float bx_re = Q2f(bx_fix);
-    // float by_re = Q2f(by_fix);
-    // float r_re = Q2f(r_fix);
-
     int32_t pax_fix = px_fix - ax_fix;
     int32_t pay_fix = py_fix - ay_fix;
     int32_t bax_fix = bx_fix - ax_fix;
     int32_t bay_fix = by_fix - ay_fix;
 
-    int32_t tmp_fix = min(((pax_fix * bax_fix)>>F + (pay_fix * bay_fix)>>F) / 
-                            ((bax_fix * bax_fix)>>F + (bay_fix * bay_fix)>>F), f2Q(1.0f));
-    int32_t h_fix = max(tmp_fix, 1);
+    int32_t t0_fix = ((pax_fix * bax_fix)>>F) + ((pay_fix * bay_fix)>>F);
+    float t0_re = Q2f(t0_fix);
+    int32_t t1_fix = (((bax_fix * bax_fix)>>F) + ((bay_fix * bay_fix)>>F));
+    float t1_re = Q2f(t1_fix);
+    int32_t tmp_fix0 = f2Q(min((t0_re/t1_re), 1.0f));
+    int32_t h_fix = max(tmp_fix0, 0);
     int32_t dx_fix = pax_fix - ((bax_fix*h_fix)>>F);
     int32_t dy_fix = pay_fix - ((bay_fix*h_fix)>>F);
-    float dx_re = Q2f(dx_fix);
-    float dy_re = Q2f(dy_fix);
+    // float dx_re = Q2f(dx_fix);
+    // float dy_re = Q2f(dy_fix);
 
-    int a = max(2,1);
-
-    tmp_fix = (dx_fix*dx_fix + dy_fix*dy_fix) >> (F);
-    float tmp_re = Q2f(tmp_fix);
+    int32_t tmp_fix = (dx_fix*dx_fix + dy_fix*dy_fix) >> (F);
+    // float tmp_re = Q2f(tmp_fix);
     int32_t ans_fix = sqrt(tmp_fix)*(1<<F/2) - r_fix;
     float ans_re = Q2f(ans_fix);
     
-    float pax = px - ax; 
-    float pay = py - ay; 
-    float bax = bx - ax; 
-    float bay = by - ay;
-    float h = fmaxf(
-        fminf((pax * bax + pay * bay) / (bax * bax + bay * bay), 1.0f), 0.0f);
+    // float pax = px - ax; 
+    // float pay = py - ay; 
+    // float bax = bx - ax; 
+    // float bay = by - ay;
+    // float _min = fminf((pax * bax + pay * bay) / (bax * bax + bay * bay), 1.0f);
+    // float h = fmaxf(_min, 0.0f);
+    // float t0 = pax * bax + pay * bay;
+    // float t1 = (bax * bax + bay * bay);
 
-    float dx = pax - bax * h;
-    float dy = pay - bay * h;
-    float tmp = dx * dx + dy * dy;
-    float ans = sqrtf(dx * dx + dy * dy) - r;
+    // float dx = pax - bax * h;
+    // float dy = pay - bay * h;
+    // float tmp = dx * dx + dy * dy;
+    // float ans = sqrtf(dx * dx + dy * dy) - r;
     return ans_re;
 }
 

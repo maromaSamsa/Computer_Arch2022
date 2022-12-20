@@ -13,7 +13,7 @@ c_fastOpt.elf: c_fastOpt.s
 	$(CROSS_COMPILE)gcc $(ASFLAGS) -o c_fastOpt.elf c_fastOpt.s -lm
 
 c_fastOpt.s: line.c
-	$(CROSS_COMPILE)gcc $(ASFLAGS) -Ofast -o c_fastOpt.s -S line.c
+	$(CROSS_COMPILE)gcc $(ASFLAGS) -O0 -o c_fastOpt.s -S line.c
 
 clean:
 	$(RM) c_fastOpt.elf c_fastOpt.s
