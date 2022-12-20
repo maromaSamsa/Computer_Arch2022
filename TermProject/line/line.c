@@ -158,19 +158,8 @@ void svpng(FILE *fp, unsigned w, unsigned h, const uint8_t *img, bool alpha)
 #define H 512
 static uint8_t img[W * H * 3];
 
-/* Using signed distnace field (SDF) of capsule shape to perform anti-aliasing
- * with single sample per pixel.
- */
-float capsuleSDF(float px,
-                 float py,
-                 float ax,
-                 float ay,
-                 float bx,
-                 float by,
-                 float r)
-{
-    // convert floating point to Q1-(32-F-1)-F -> int32_t
-#define F   (10)
+/* convert floating point to Q1-(32-F-1)-F -> int32_t */
+#define F   (8)
 #define f2Q(x) ((int32_t)(x*(1<<F)))
 #define Q2f(x) (((float)(x))/(1<<F))
 #define max(a, b) ({ \
@@ -184,6 +173,21 @@ float capsuleSDF(float px,
     _a < _b ? _a : _b; \
 })
 
+/* Using signed distnace field (SDF) of capsule shape to perform anti-aliasing
+ * with single sample per pixel.
+ */
+float capsuleSDF(float px,
+                 float py,
+                 float ax,
+                 float ay,
+                 float bx,
+                 float by,
+                 float r)
+{
+    /*
+    * Convertion would be skip after rewrite whole function into 
+    * fixed-point arithmetic version
+    */
     int32_t px_fix = f2Q(px);
     int32_t py_fix = f2Q(py);
     int32_t ax_fix = f2Q(ax);
@@ -198,35 +202,16 @@ float capsuleSDF(float px,
     int32_t bay_fix = by_fix - ay_fix;
 
     int32_t t0_fix = ((pax_fix * bax_fix)>>F) + ((pay_fix * bay_fix)>>F);
-    float t0_re = Q2f(t0_fix);
     int32_t t1_fix = (((bax_fix * bax_fix)>>F) + ((bay_fix * bay_fix)>>F));
-    float t1_re = Q2f(t1_fix);
     int32_t tmp_fix0 = min(((t0_fix<<F)/t1_fix), f2Q(1.0f));
     int32_t h_fix = max(tmp_fix0, 0);
+
     int32_t dx_fix = pax_fix - ((bax_fix*h_fix)>>F);
     int32_t dy_fix = pay_fix - ((bay_fix*h_fix)>>F);
-    // float dx_re = Q2f(dx_fix);
-    // float dy_re = Q2f(dy_fix);
 
     int32_t tmp_fix = (dx_fix*dx_fix + dy_fix*dy_fix) >> (F);
-    // float tmp_re = Q2f(tmp_fix);
     int32_t ans_fix = sqrt(tmp_fix)*(1<<F/2) - r_fix;
-    float ans_re = Q2f(ans_fix);
-    
-    // float pax = px - ax; 
-    // float pay = py - ay; 
-    // float bax = bx - ax; 
-    // float bay = by - ay;
-    // float _min = fminf((pax * bax + pay * bay) / (bax * bax + bay * bay), 1.0f);
-    // float h = fmaxf(_min, 0.0f);
-    // float t0 = pax * bax + pay * bay;
-    // float t1 = (bax * bax + bay * bay);
-
-    // float dx = pax - bax * h;
-    // float dy = pay - bay * h;
-    // float tmp = dx * dx + dy * dy;
-    // float ans = sqrtf(dx * dx + dy * dy) - r;
-    return ans_re;
+    return Q2f(ans_fix);
 }
 
 /* Render shapes into the buffer individually with alpha blending. */
