@@ -201,7 +201,7 @@ float capsuleSDF(float px,
     float t0_re = Q2f(t0_fix);
     int32_t t1_fix = (((bax_fix * bax_fix)>>F) + ((bay_fix * bay_fix)>>F));
     float t1_re = Q2f(t1_fix);
-    int32_t tmp_fix0 = f2Q(min((t0_re/t1_re), 1.0f));
+    int32_t tmp_fix0 = min(((t0_fix<<F)/t1_fix), f2Q(1.0f));
     int32_t h_fix = max(tmp_fix0, 0);
     int32_t dx_fix = pax_fix - ((bax_fix*h_fix)>>F);
     int32_t dy_fix = pay_fix - ((bay_fix*h_fix)>>F);
