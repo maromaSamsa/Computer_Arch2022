@@ -169,69 +169,11 @@ float capsuleSDF(float px,
                  float by,
                  float r)
 {
-    // convert floating point to Q1-(32-F-1)-F -> int32_t
-#define F   (10)
-#define f2Q(x) ((int32_t)(x*(1<<F)))
-#define Q2f(x) (((float)(x))/(1<<F))
-#define max(a, b) ({ \
-    typeof (a) _a = (a); \
-    typeof (b) _b = (b); \
-    _a > _b ? _a : _b; \
-})
-#define min(a, b) ({ \
-    typeof (a) _a = (a); \
-    typeof (b) _b = (b); \
-    _a < _b ? _a : _b; \
-})
-
-    int32_t px_fix = f2Q(px);
-    int32_t py_fix = f2Q(py);
-    int32_t ax_fix = f2Q(ax);
-    int32_t ay_fix = f2Q(ay);
-    int32_t bx_fix = f2Q(bx);
-    int32_t by_fix = f2Q(by);
-    int32_t r_fix = f2Q(r);
-
-    // float px_re = Q2f(px_fix);
-    // float py_re = Q2f(py_fix);
-    // float ax_re = Q2f(ax_fix);
-    // float ay_re = Q2f(ay_fix);
-    // float bx_re = Q2f(bx_fix);
-    // float by_re = Q2f(by_fix);
-    // float r_re = Q2f(r_fix);
-
-    int32_t pax_fix = px_fix - ax_fix;
-    int32_t pay_fix = py_fix - ay_fix;
-    int32_t bax_fix = bx_fix - ax_fix;
-    int32_t bay_fix = by_fix - ay_fix;
-
-    int32_t tmp_fix = min(((pax_fix * bax_fix)>>F + (pay_fix * bay_fix)>>F) / 
-                            ((bax_fix * bax_fix)>>F + (bay_fix * bay_fix)>>F), f2Q(1.0f));
-    int32_t h_fix = max(tmp_fix, 1);
-    int32_t dx_fix = pax_fix - ((bax_fix*h_fix)>>F);
-    int32_t dy_fix = pay_fix - ((bay_fix*h_fix)>>F);
-    float dx_re = Q2f(dx_fix);
-    float dy_re = Q2f(dy_fix);
-
-    int a = max(2,1);
-
-    tmp_fix = (dx_fix*dx_fix + dy_fix*dy_fix) >> (F);
-    float tmp_re = Q2f(tmp_fix);
-    int32_t ans_fix = sqrt(tmp_fix)*(1<<F/2) - r_fix;
-    float ans_re = Q2f(ans_fix);
-    
-    float pax = px - ax; 
-    float pay = py - ay; 
-    float bax = bx - ax; 
-    float bay = by - ay;
+    float pax = px - ax, pay = py - ay, bax = bx - ax, bay = by - ay;
     float h = fmaxf(
         fminf((pax * bax + pay * bay) / (bax * bax + bay * bay), 1.0f), 0.0f);
-
-    float dx = pax - bax * h;
-    float dy = pay - bay * h;
-    float tmp = dx * dx + dy * dy;
-    float ans = sqrtf(dx * dx + dy * dy) - r;
-    return ans_re;
+    float dx = pax - bax * h, dy = pay - bay * h;
+    return sqrtf(dx * dx + dy * dy) - r;
 }
 
 /* Render shapes into the buffer individually with alpha blending. */
