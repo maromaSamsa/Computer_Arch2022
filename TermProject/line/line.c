@@ -238,10 +238,20 @@ void alphablend(int x, int y, float alpha, float r, float g, float b)
 /* Use AABB of capsule to reduce the number of samples. */
 void lineSDFAABB(float ax, float ay, float bx, float by, float r)
 {
-    int x0 = (int) floorf(fminf(ax, bx) - r);
-    int x1 = (int) ceilf(fmaxf(ax, bx) + r);
-    int y0 = (int) floorf(fminf(ay, by) - r);
-    int y1 = (int) ceilf(fmaxf(ay, by) + r);
+    /*
+    * Convertion would be skip after rewrite whole function into 
+    * fixed-point arithmetic version
+    */
+    q_fmt _ax = f2Q(ax);
+    q_fmt _ay = f2Q(ay);
+    q_fmt _bx = f2Q(bx);
+    q_fmt _by = f2Q(by);
+    q_fmt _r = f2Q(r);
+    
+    int x0 = (int) floorq(min(_ax, _bx) - _r) >> Q;
+    int x1 = (int) ceilq(max(_ax, _bx) + _r) >> Q;
+    int y0 = (int) floorq(min(_ay, _by) - _r) >> Q;
+    int y1 = (int) ceilq(max(_ay, _by) + _r) >> Q;
     for (int y = y0; y <= y1; y++) {
         for (int x = x0; x <= x1; x++)
             alphablend(
