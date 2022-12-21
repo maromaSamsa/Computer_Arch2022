@@ -32,10 +32,8 @@ static inline q_fmt q_mul(q_fmt a, q_fmt b){
     q_buf tmp = (q_buf)a * (q_buf)b;
 
     // rounding
-    char round = (tmp >> (Q*2-3)) & 0b111;
-    if(round >= 5){
-        tmp += (q_buf)(1<<Q*2);
-    }
+    tmp += (q_buf)(1<<(Q-1));
+    
     // check overflow
     if(tmp > (q_buf)QFMT_MAX) return (q_fmt)QFMT_MAX;
     if(tmp * -1 >= (q_buf)QFMT_MIN) return (q_fmt)QFMT_MIN;
