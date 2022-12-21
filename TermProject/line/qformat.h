@@ -39,7 +39,7 @@ static inline q_fmt q_mul(q_fmt a, q_fmt b){
     // check overflow
     if(tmp > (q_buf)QFMT_MAX) return (q_fmt)QFMT_MAX;
     if(tmp * -1 >= (q_buf)QFMT_MIN) return (q_fmt)QFMT_MIN;
-    return (q_fmt)tmp;
+    return (q_fmt)tmp >> Q;
 }
 
 /* division of Q format value, no support rounding for now*/
