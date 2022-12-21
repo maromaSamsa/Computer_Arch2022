@@ -3,7 +3,7 @@
 #define Q (8)
 
 /* format convertion: float to Q format */
-#define f2Q(x) ((int32_t)(x*(1<<Q)))
+#define f2Q(x) ((int32_t)((x)*(1<<Q)))
 
 /* format convertion: Q format to float */
 #define Q2f(x) (((float)(x))/(1<<Q))
