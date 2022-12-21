@@ -214,10 +214,27 @@ float capsuleSDF(float px,
 /* Render shapes into the buffer individually with alpha blending. */
 void alphablend(int x, int y, float alpha, float r, float g, float b)
 {
-    uint8_t *p = img + (y * W + x) * 3;
-    p[0] = (uint8_t) (p[0] * (1 - alpha) + r * alpha * 255);
-    p[1] = (uint8_t) (p[1] * (1 - alpha) + g * alpha * 255);
-    p[2] = (uint8_t) (p[2] * (1 - alpha) + b * alpha * 255);
+    /*
+    * Convertion would be skip after rewrite whole function into 
+    * fixed-point arithmetic version
+    */
+    q_fmt _x = f2Q(x);
+    q_fmt _y = f2Q(y);
+    q_fmt _alpha = f2Q(alpha);
+    q_fmt _r = f2Q(r);
+    q_fmt _g = f2Q(g);
+    q_fmt _b = f2Q(b);
+
+    int pix = (int)Q2f(_y) * W + (int)Q2f(_x);
+    uint8_t *p = img + pix * 3;
+    p[0] = (uint8_t)(p[0] * Q2f(q_add((1<<Q), -_alpha)) + Q2f(q_mul(_r, _alpha) * (255<<Q)));
+    p[1] = (uint8_t)(p[1] * Q2f(q_add((1<<Q), -_alpha)) + Q2f(q_mul(_g, _alpha) * (255<<Q)));
+    p[2] = (uint8_t)(p[2] * Q2f(q_add((1<<Q), -_alpha)) + Q2f(q_mul(_b, _alpha) * (255<<Q)));
+
+    // uint8_t *p = img + (y * W + x) * 3;
+    // p[0] = (uint8_t) (p[0] * (1 - alpha) + r * alpha * 255);
+    // p[1] = (uint8_t) (p[1] * (1 - alpha) + g * alpha * 255);
+    // p[2] = (uint8_t) (p[2] * (1 - alpha) + b * alpha * 255);
 }
 
 /* Use AABB of capsule to reduce the number of samples. */
