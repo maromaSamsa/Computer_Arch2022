@@ -152,16 +152,13 @@ void svpng(FILE *fp, unsigned w, unsigned h, const uint8_t *img, bool alpha)
 
 #include <math.h>  // ceilf(), floorf(), fminf(), fmaxf(), sinf(), cosf(), sqrtf()
 #include <string.h>  // memset()
+#include "qformat.h"
 
 #define PI 3.14159265359f
 #define W 512
 #define H 512
 static uint8_t img[W * H * 3];
 
-/* convert floating point to Q1-(32-F-1)-F -> int32_t */
-#define F   (8)
-#define f2Q(x) ((int32_t)(x*(1<<F)))
-#define Q2f(x) (((float)(x))/(1<<F))
 #define max(a, b) ({ \
     typeof (a) _a = (a); \
     typeof (b) _b = (b); \
@@ -188,29 +185,29 @@ float capsuleSDF(float px,
     * Convertion would be skip after rewrite whole function into 
     * fixed-point arithmetic version
     */
-    int32_t px_fix = f2Q(px);
-    int32_t py_fix = f2Q(py);
-    int32_t ax_fix = f2Q(ax);
-    int32_t ay_fix = f2Q(ay);
-    int32_t bx_fix = f2Q(bx);
-    int32_t by_fix = f2Q(by);
-    int32_t r_fix = f2Q(r);
+    q_fmt px_fix = f2Q(px);
+    q_fmt py_fix = f2Q(py);
+    q_fmt ax_fix = f2Q(ax);
+    q_fmt ay_fix = f2Q(ay);
+    q_fmt bx_fix = f2Q(bx);
+    q_fmt by_fix = f2Q(by);
+    q_fmt r_fix = f2Q(r);
 
-    int32_t pax_fix = px_fix - ax_fix;
-    int32_t pay_fix = py_fix - ay_fix;
-    int32_t bax_fix = bx_fix - ax_fix;
-    int32_t bay_fix = by_fix - ay_fix;
+    q_fmt pax_fix = q_add(px_fix, -ax_fix);
+    q_fmt pay_fix = q_add(py_fix, -ay_fix);
+    q_fmt bax_fix = q_add(bx_fix, -ax_fix);
+    q_fmt bay_fix = q_add(by_fix, -ay_fix);
 
-    int32_t t0_fix = ((pax_fix * bax_fix)>>F) + ((pay_fix * bay_fix)>>F);
-    int32_t t1_fix = (((bax_fix * bax_fix)>>F) + ((bay_fix * bay_fix)>>F));
-    int32_t tmp_fix0 = min(((t0_fix<<F)/t1_fix), f2Q(1.0f));
-    int32_t h_fix = max(tmp_fix0, 0);
+    q_fmt t0_fix = q_add(q_mul(pax_fix, bax_fix), q_mul(pay_fix, bay_fix));
+    q_fmt t1_fix = q_add(q_mul(bax_fix, bax_fix), q_mul(bay_fix, bay_fix));
+    q_fmt tmp_fix0 = min(q_div(t0_fix, t1_fix), f2Q(1.0f));
+    q_fmt h_fix = max(tmp_fix0, 0);
 
-    int32_t dx_fix = pax_fix - ((bax_fix*h_fix)>>F);
-    int32_t dy_fix = pay_fix - ((bay_fix*h_fix)>>F);
+    q_fmt dx_fix = q_add(pax_fix, -q_mul(bax_fix, h_fix));
+    q_fmt dy_fix = q_add(pay_fix, -q_mul(bay_fix, h_fix));
 
-    int32_t tmp_fix = (dx_fix*dx_fix + dy_fix*dy_fix) >> (F);
-    int32_t ans_fix = sqrt(tmp_fix)*(1<<F/2) - r_fix;
+    q_fmt tmp_fix = q_add(q_mul(dx_fix, dx_fix), q_mul(dy_fix, dy_fix));
+    q_fmt ans_fix = q_add(sqrt(tmp_fix)*(1<<Q/2), -r_fix);
     return Q2f(ans_fix);
 }
 
