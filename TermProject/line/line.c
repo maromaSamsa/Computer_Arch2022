@@ -154,7 +154,7 @@ void svpng(FILE *fp, unsigned w, unsigned h, const uint8_t *img, bool alpha)
 #include <string.h>  // memset()
 #include "qformat.h"
 
-#define PI 3.14159265359f
+#define PI f2Q(3.14159265359f)
 #define W 512
 #define H 512
 static uint8_t img[W * H * 3];
@@ -210,17 +210,17 @@ void alphablend(int x, int y, q_fmt alpha, q_fmt r, q_fmt g, q_fmt b)
 }
 
 /* Use AABB of capsule to reduce the number of samples. */
-void lineSDFAABB(float ax, float ay, float bx, float by, float r)
+void lineSDFAABB(q_fmt _ax, q_fmt _ay, q_fmt _bx, q_fmt _by, q_fmt _r)
 {
     /*
     * Convertion would be skip after rewrite whole function into 
     * fixed-point arithmetic version
     */
-    q_fmt _ax = f2Q(ax);
-    q_fmt _ay = f2Q(ay);
-    q_fmt _bx = f2Q(bx);
-    q_fmt _by = f2Q(by);
-    q_fmt _r = f2Q(r);
+    // q_fmt _ax = f2Q(ax);
+    // q_fmt _ay = f2Q(ay);
+    // q_fmt _bx = f2Q(bx);
+    // q_fmt _by = f2Q(by);
+    // q_fmt _r = f2Q(r);
     
     int x0 = Q2I(floorq(min(_ax, _bx) - _r));
     int x1 = Q2I(ceilq(max(_ax, _bx) + _r));
@@ -239,14 +239,19 @@ void lineSDFAABB(float ax, float ay, float bx, float by, float r)
 int main()
 {
     memset(img, 255, sizeof(img));
-    float cx = W * 0.5f, cy = H * 0.5f;
+    q_fmt cx = W * (1<<(Q-1)), cy = H * (1<<(Q-1));
     for (int j = 0; j < 5; j++) {
-        float r1 = fminf(W, H) * (j + 0.5f) * 0.085f;
-        float r2 = fminf(W, H) * (j + 1.5f) * 0.085f;
-        float t = j * PI / 64.0f, r = (j + 1) * 0.5f;
-        for (int i = 1; i <= 64; i++, t += 2.0f * PI / 64.0f) {
-            float ct = cosf(t), st = sinf(t);
-            lineSDFAABB(cx + r1 * ct, cy - r1 * st, cx + r2 * ct, cy - r2 * st,
+        q_fmt r1 = min(W, H) * q_mul(((j<<Q) + (1<<(Q-1))), f2Q(0.085f));
+        q_fmt r2 = min(W, H) * q_mul(((j<<Q) + (3<<(Q-1))), f2Q(0.085f));
+        q_fmt t = j * q_div(PI, f2Q(64.0f));
+        q_fmt r = (j + 1) * (1<<(Q-1));
+        for (int i = 1; i <= 64; i++, t = q_add(t, q_mul((2<<Q), q_div(PI, f2Q(64.0f))))) {
+            q_fmt ct = f2Q(cosf(Q2f(t)));
+            q_fmt st = f2Q(sinf(Q2f(t)));
+            lineSDFAABB(q_add(cx, q_mul(r1, ct)), 
+                        q_add(cy, -q_mul(r1, st)),
+                        q_add(cx, q_mul(r2, ct)), 
+                        q_add(cy, -q_mul(r2, st)),
                         r);
         }
     }
