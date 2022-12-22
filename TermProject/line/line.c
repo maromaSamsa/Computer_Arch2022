@@ -212,22 +212,12 @@ float capsuleSDF(float px,
 }
 
 /* Render shapes into the buffer individually with alpha blending. */
-void alphablend(int x, int y, float alpha, float r, float g, float b)
+void alphablend(int x, int y, q_fmt alpha, q_fmt r, q_fmt g, q_fmt b)
 {
-    /*
-    * Convertion would be skip after rewrite whole function into 
-    * fixed-point arithmetic version
-    */
-    q_fmt _alpha = f2Q(alpha);
-    q_fmt _r = f2Q(r);
-    q_fmt _g = f2Q(g);
-    q_fmt _b = f2Q(b);
-
-    int pix = y * W + x;
-    uint8_t *p = img + pix * 3;
-    p[0] = (uint8_t)(p[0] * Q2f(q_add((1<<Q), -_alpha)) + Q2f(q_mul(_r, _alpha) * (255<<Q)));
-    p[1] = (uint8_t)(p[1] * Q2f(q_add((1<<Q), -_alpha)) + Q2f(q_mul(_g, _alpha) * (255<<Q)));
-    p[2] = (uint8_t)(p[2] * Q2f(q_add((1<<Q), -_alpha)) + Q2f(q_mul(_b, _alpha) * (255<<Q)));
+    uint8_t *p = img + (y * W + x) * 3;
+    p[0] = (uint8_t)Q2I(p[0] * q_add((1<<Q), -alpha) + q_mul(r, alpha) * 255);
+    p[1] = (uint8_t)Q2I(p[1] * q_add((1<<Q), -alpha) + q_mul(g, alpha) * 255);
+    p[2] = (uint8_t)Q2I(p[2] * q_add((1<<Q), -alpha)+ q_mul(b, alpha) * 255);
 
     // uint8_t *p = img + (y * W + x) * 3;
     // p[0] = (uint8_t) (p[0] * (1 - alpha) + r * alpha * 255);
@@ -256,9 +246,9 @@ void lineSDFAABB(float ax, float ay, float bx, float by, float r)
         for (int x = x0; x <= x1; x++)
             alphablend(
                 x, y,
-                fmaxf(fminf(0.5f - capsuleSDF(x, y, ax, ay, bx, by, r), 1.0f),
-                      0.0f),
-                0.0f, 0.0f, 0.0f);
+                f2Q(fmaxf(fminf(0.5f - capsuleSDF(x, y, ax, ay, bx, by, r), 1.0f),
+                      0.0f)),
+                f2Q(0.0f), f2Q(0.0f), f2Q(0.0f));
     }
 }
 
