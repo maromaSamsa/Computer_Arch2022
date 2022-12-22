@@ -223,10 +223,10 @@ void lineSDFAABB(q_fmt _ax, q_fmt _ay, q_fmt _bx, q_fmt _by, q_fmt _r)
     // q_fmt _by = f2Q(by);
     // q_fmt _r = f2Q(r);
     
-    int x0 = Q2I(floorq(min(_ax, _bx) - _r));
-    int x1 = Q2I(ceilq(max(_ax, _bx) + _r));
-    int y0 = Q2I(floorq(min(_ay, _by) - _r));
-    int y1 = Q2I(ceilq(max(_ay, _by) + _r));
+    int x0 = Q2I(floorq(q_add(min(_ax, _bx), -_r)));
+    int x1 = Q2I(ceilq(q_add(max(_ax, _bx), _r)));
+    int y0 = Q2I(floorq(q_add(min(_ay, _by), -_r)));
+    int y1 = Q2I(ceilq(q_add(max(_ay, _by), _r)));
     for (int y = y0; y <= y1; y++) {
         for (int x = x0; x <= x1; x++)
             alphablend(
