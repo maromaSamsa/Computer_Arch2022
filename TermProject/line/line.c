@@ -173,42 +173,31 @@ static uint8_t img[W * H * 3];
 /* Using signed distnace field (SDF) of capsule shape to perform anti-aliasing
  * with single sample per pixel.
  */
-float capsuleSDF(float px,
-                 float py,
-                 float ax,
-                 float ay,
-                 float bx,
-                 float by,
-                 float r)
+q_fmt capsuleSDF(q_fmt px,
+                 q_fmt py,
+                 q_fmt ax,
+                 q_fmt ay,
+                 q_fmt bx,
+                 q_fmt by,
+                 q_fmt r)
 {
-    /*
-    * Convertion would be skip after rewrite whole function into 
-    * fixed-point arithmetic version
-    */
-    q_fmt px_fix = f2Q(px);
-    q_fmt py_fix = f2Q(py);
-    q_fmt ax_fix = f2Q(ax);
-    q_fmt ay_fix = f2Q(ay);
-    q_fmt bx_fix = f2Q(bx);
-    q_fmt by_fix = f2Q(by);
-    q_fmt r_fix = f2Q(r);
 
-    q_fmt pax_fix = q_add(px_fix, -ax_fix);
-    q_fmt pay_fix = q_add(py_fix, -ay_fix);
-    q_fmt bax_fix = q_add(bx_fix, -ax_fix);
-    q_fmt bay_fix = q_add(by_fix, -ay_fix);
+    q_fmt pax = q_add(px, -ax);
+    q_fmt pay = q_add(py, -ay);
+    q_fmt bax = q_add(bx, -ax);
+    q_fmt bay = q_add(by, -ay);
 
-    q_fmt t0_fix = q_add(q_mul(pax_fix, bax_fix), q_mul(pay_fix, bay_fix));
-    q_fmt t1_fix = q_add(q_mul(bax_fix, bax_fix), q_mul(bay_fix, bay_fix));
-    q_fmt tmp_fix0 = min(q_div(t0_fix, t1_fix), f2Q(1.0f));
-    q_fmt h_fix = max(tmp_fix0, 0);
+    q_fmt t0 = q_add(q_mul(pax, bax), q_mul(pay, bay));
+    q_fmt t1 = q_add(q_mul(bax, bax), q_mul(bay, bay));
+    q_fmt tmp = min(q_div(t0, t1), f2Q(1.0f));
+    q_fmt h = max(tmp, 0);
 
-    q_fmt dx_fix = q_add(pax_fix, -q_mul(bax_fix, h_fix));
-    q_fmt dy_fix = q_add(pay_fix, -q_mul(bay_fix, h_fix));
+    q_fmt dx = q_add(pax, -q_mul(bax, h));
+    q_fmt dy = q_add(pay, -q_mul(bay, h));
 
-    q_fmt tmp_fix = q_add(q_mul(dx_fix, dx_fix), q_mul(dy_fix, dy_fix));
-    q_fmt ans_fix = q_add(sqrt(tmp_fix)*(1<<Q/2), -r_fix);
-    return Q2f(ans_fix);
+    tmp = q_add(q_mul(dx, dx), q_mul(dy, dy));
+    q_fmt res = q_add(sqrt(tmp)*(1<<Q/2), -r);
+    return res;
 }
 
 /* Render shapes into the buffer individually with alpha blending. */
@@ -241,9 +230,9 @@ void lineSDFAABB(float ax, float ay, float bx, float by, float r)
         for (int x = x0; x <= x1; x++)
             alphablend(
                 x, y,
-                f2Q(fmaxf(fminf(0.5f - capsuleSDF(x, y, ax, ay, bx, by, r), 1.0f),
-                      0.0f)),
-                f2Q(0.0f), f2Q(0.0f), f2Q(0.0f));
+                max(min((1<<(Q-1)) - capsuleSDF((x<<Q), (y<<Q), _ax, _ay, _bx, _by, _r), (1<<Q)),
+                      0),
+                0, 0, 0);
     }
 }
 
