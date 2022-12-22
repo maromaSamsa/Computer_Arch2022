@@ -8,6 +8,9 @@
 /* format convertion: Q format to float */
 #define Q2f(x) (((float)(x))/(1<<Q))
 
+/* format convertion: Q format to int */
+#define Q2I(x) ((int)(x >> Q))
+
 typedef int32_t q_fmt;
 typedef int64_t q_buf;
 #define QFMT_MAX 0x7FFFFFFF
