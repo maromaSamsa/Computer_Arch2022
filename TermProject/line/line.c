@@ -189,7 +189,7 @@ q_fmt capsuleSDF(q_fmt px,
 
     q_fmt t0 = q_add(q_mul(pax, bax), q_mul(pay, bay));
     q_fmt t1 = q_add(q_mul(bax, bax), q_mul(bay, bay));
-    q_fmt tmp = min(q_div(t0, t1), f2Q(1.0f));
+    q_fmt tmp = min(q_div(t0, t1), I2Q(1));
     q_fmt h = max(tmp, 0);
 
     q_fmt dx = q_add(pax, -q_mul(bax, h));
@@ -231,11 +231,11 @@ int main()
     memset(img, 255, sizeof(img));
     q_fmt cx = W * (1<<(Q-1)), cy = H * (1<<(Q-1));
     for (int j = 0; j < 5; j++) {
-        q_fmt r1 = min(W, H) * q_mul(((j<<Q) + (1<<(Q-1))), f2Q(0.085f));
-        q_fmt r2 = min(W, H) * q_mul(((j<<Q) + (3<<(Q-1))), f2Q(0.085f));
-        q_fmt t = j * q_div(PI, f2Q(64.0f));
+        q_fmt r1 = min(W, H) * q_mul((I2Q(j) + (1<<(Q-1))), f2Q(0.085f));
+        q_fmt r2 = min(W, H) * q_mul((I2Q(j) + (3<<(Q-1))), f2Q(0.085f));
+        q_fmt t = j * q_div(PI, I2Q(64));
         q_fmt r = (j + 1) * (1<<(Q-1));
-        for (int i = 1; i <= 64; i++, t = q_add(t, q_mul((2<<Q), q_div(PI, f2Q(64.0f))))) {
+        for (int i = 1; i <= 64; i++, t = q_add(t, q_mul(I2Q(2), q_div(PI, I2Q(64))))) {
             q_fmt ct = f2Q(cosf(Q2f(t)));
             q_fmt st = f2Q(sinf(Q2f(t)));
             lineSDFAABB(q_add(cx, q_mul(r1, ct)), 
