@@ -72,9 +72,18 @@ static inline q_fmt ceilq(q_fmt x){
     return delta? q_add(x, 1<<Q): x;
 }
 
+/* return the nonnegative square root of x */
 static inline q_fmt sqrtq(q_fmt x){
+    if(x == 0) return 0;
     q_fmt res = 0;
     q_fmt bit = 1<<15;
+
+    int offset = 0;
+    for(q_fmt i = x; !(0x40000000 & i); i <<= 1){
+        ++offset;
+    }
+    offset = (offset & ~1);
+    x <<= offset;
 
     // shift bit to the highest bit 1' in x
     while(bit > x){
@@ -86,12 +95,14 @@ static inline q_fmt sqrtq(q_fmt x){
         // check overflow: 46341^2 > 2^31 - 1, which is the maximun value
         if(tmp > 46340) continue; 
         int square = tmp*tmp;
-        if(square < x){
+        if(square <= x){
             res = tmp;
+            if(square == x) break;
         }
-        if(square == x) return tmp;
         // iter: goto next lower bit to get more precise sqrt value
     }
-    return res << (Q/2);
+    offset >>= 1;
+    offset -= (Q >> 1);
+    return (offset >= 0)? res >> offset : res << (-offset) ;
 }
 
