@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#define Q (8)
+#define Q (10)
 #define PI_Q (1686629713>>(29-Q))
 
 typedef int32_t q_fmt;
@@ -46,6 +46,11 @@ static inline q_fmt q_mul(q_fmt a, q_fmt b){
 /* division of Q format value, no support rounding for now */
 static inline q_fmt q_div(q_fmt a, q_fmt b){
     q_buf tmp = (q_buf)a << Q;
+    if ((tmp >= 0 && b >= 0) || (tmp < 0 && b < 0)) {   
+        tmp += b / 2;    /* OR shift 1 bit i.e. temp += (b >> 1); */
+    } else {
+        tmp -= b / 2;    /* OR shift 1 bit i.e. temp -= (b >> 1); */
+    }
     return (q_fmt)(tmp / b);
 }
 

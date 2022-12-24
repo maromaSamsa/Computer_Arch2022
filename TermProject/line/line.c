@@ -210,17 +210,17 @@ void alphablend(int x, int y, q_fmt alpha, q_fmt r, q_fmt g, q_fmt b)
 }
 
 /* Use AABB of capsule to reduce the number of samples. */
-void lineSDFAABB(q_fmt _ax, q_fmt _ay, q_fmt _bx, q_fmt _by, q_fmt _r)
+void lineSDFAABB(q_fmt ax, q_fmt ay, q_fmt bx, q_fmt by, q_fmt r)
 {   
-    int x0 = Q2I(floorq(q_add(min(_ax, _bx), -_r)));
-    int x1 = Q2I(ceilq(q_add(max(_ax, _bx), _r)));
-    int y0 = Q2I(floorq(q_add(min(_ay, _by), -_r)));
-    int y1 = Q2I(ceilq(q_add(max(_ay, _by), _r)));
+    int x0 = Q2I(floorq(q_add(min(ax, bx), -r)));
+    int x1 = Q2I(ceilq(q_add(max(ax, bx), r)));
+    int y0 = Q2I(floorq(q_add(min(ay, by), -r)));
+    int y1 = Q2I(ceilq(q_add(max(ay, by), r)));
     for (int y = y0; y <= y1; y++) {
         for (int x = x0; x <= x1; x++)
             alphablend(
                 x, y,
-                max(min((1<<(Q-1)) - capsuleSDF((x<<Q), (y<<Q), _ax, _ay, _bx, _by, _r), (1<<Q)),
+                max(min((1<<(Q-1)) - capsuleSDF((x<<Q), (y<<Q), ax, ay, bx, by, r), (1<<Q)),
                       0),
                 0, 0, 0);
     }
