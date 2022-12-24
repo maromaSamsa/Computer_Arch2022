@@ -197,7 +197,7 @@ q_fmt capsuleSDF(q_fmt px,
 
     tmp = q_add(q_mul(dx, dx), q_mul(dy, dy));
     // q_fmt res = q_add(sqrt(tmp)*(1<<Q/2), -r);
-    q_fmt res = q_add(f2Q(sqrt(Q2f(tmp))), -r);
+    q_fmt res = q_add(sqrtq(tmp), -r);
     return res;
 }
 

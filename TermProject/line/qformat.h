@@ -72,3 +72,22 @@ static inline q_fmt ceilq(q_fmt x){
     return delta? q_add(x, 1<<Q): x;
 }
 
+static inline q_fmt sqrtq(q_fmt x){
+    q_fmt res = 0;
+    q_fmt bit = 1<<15;
+
+    // shift bit to the highest bit 1' in x
+    while(bit > x){
+        bit >>= 1;
+    }
+
+    for(bit; bit > 0; bit >>= 1){
+        int tmp = bit + res;
+        // check overflow: 46341^2 > 2^31 - 1, which is the maximun value
+        if(tmp > 46340) continue; 
+        int square = tmp*tmp;
+        if(square < x){
+            res = tmp;
+        }
+        if(square == x) return tmp;
+        // iter: goto next lower bit to get more precise sqrt value
