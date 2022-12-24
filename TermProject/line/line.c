@@ -205,9 +205,9 @@ q_fmt capsuleSDF(q_fmt px,
 void alphablend(int x, int y, q_fmt alpha, q_fmt r, q_fmt g, q_fmt b)
 {
     uint8_t *p = img + (y * W + x) * 3;
-    p[0] = (uint8_t)Q2I(p[0] * q_add((1<<Q), -alpha) + q_mul(r, alpha) * 255);
-    p[1] = (uint8_t)Q2I(p[1] * q_add((1<<Q), -alpha) + q_mul(g, alpha) * 255);
-    p[2] = (uint8_t)Q2I(p[2] * q_add((1<<Q), -alpha)+ q_mul(b, alpha) * 255);
+    p[0] = (uint8_t)Q2I(q_add(p[0] * q_add((1<<Q), -alpha), q_mul(r, alpha) * 255));
+    p[1] = (uint8_t)Q2I(q_add(p[1] * q_add((1<<Q), -alpha), q_mul(g, alpha) * 255));
+    p[2] = (uint8_t)Q2I(q_add(p[2] * q_add((1<<Q), -alpha), q_mul(b, alpha) * 255));
 }
 
 /* Use AABB of capsule to reduce the number of samples. */
