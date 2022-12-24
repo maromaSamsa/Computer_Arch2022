@@ -24,11 +24,6 @@ typedef int64_t q_buf;
 
 /* addition of Q format value*/
 static inline q_fmt q_add(q_fmt a, q_fmt b){
-    return a + b;
-};
-
-/* addition of Q format value, also check overflow*/
-static inline q_fmt q_add_sat(q_fmt a, q_fmt b){
     q_buf tmp = (q_buf)a + (q_buf)b;
     if(tmp > (q_buf)QFMT_MAX) return (q_fmt)QFMT_MAX;
     if(tmp * -1 >= (q_buf)QFMT_MIN) return (q_fmt)QFMT_MIN;
