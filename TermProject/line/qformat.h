@@ -1,9 +1,13 @@
 #include <stdint.h>
 
 #define Q (8)
+#define PI_Q (1686629713>>(29-Q))
+
+typedef int32_t q_fmt;
+typedef int64_t q_buf;
 
 /* format convertion: float to Q format */
-#define f2Q(x) ((int32_t)((x)*(1<<Q)))
+#define f2Q(x) ((q_fmt)((x)*(1<<Q)))
 
 /* format convertion: Q format to float */
 #define Q2f(x) (((float)(x))/(1<<Q))
@@ -11,8 +15,9 @@
 /* format convertion: Q format to int */
 #define Q2I(x) ((int)((x) >> Q))
 
-typedef int32_t q_fmt;
-typedef int64_t q_buf;
+/* format convertion: int format to Q */
+#define I2Q(x) ((q_fmt)((x) << Q))
+
 #define QFMT_MAX 0x7FFFFFFF
 #define QFMT_MIN 0x80000000
 

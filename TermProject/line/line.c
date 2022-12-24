@@ -154,7 +154,7 @@ void svpng(FILE *fp, unsigned w, unsigned h, const uint8_t *img, bool alpha)
 #include <string.h>  // memset()
 #include "qformat.h"
 
-#define PI f2Q(3.14159265359f)
+#define PI PI_Q
 #define W 512
 #define H 512
 static uint8_t img[W * H * 3];
