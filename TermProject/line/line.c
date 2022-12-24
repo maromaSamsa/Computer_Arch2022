@@ -196,7 +196,6 @@ q_fmt capsuleSDF(q_fmt px,
     q_fmt dy = q_add(pay, -q_mul(bay, h));
 
     tmp = q_add(q_mul(dx, dx), q_mul(dy, dy));
-    // q_fmt res = q_add(sqrt(tmp)*(1<<Q/2), -r);
     q_fmt res = q_add(sqrtq(tmp), -r);
     return res;
 }
@@ -212,17 +211,7 @@ void alphablend(int x, int y, q_fmt alpha, q_fmt r, q_fmt g, q_fmt b)
 
 /* Use AABB of capsule to reduce the number of samples. */
 void lineSDFAABB(q_fmt _ax, q_fmt _ay, q_fmt _bx, q_fmt _by, q_fmt _r)
-{
-    /*
-    * Convertion would be skip after rewrite whole function into 
-    * fixed-point arithmetic version
-    */
-    // q_fmt _ax = f2Q(ax);
-    // q_fmt _ay = f2Q(ay);
-    // q_fmt _bx = f2Q(bx);
-    // q_fmt _by = f2Q(by);
-    // q_fmt _r = f2Q(r);
-    
+{   
     int x0 = Q2I(floorq(q_add(min(_ax, _bx), -_r)));
     int x1 = Q2I(ceilq(q_add(max(_ax, _bx), _r)));
     int y0 = Q2I(floorq(q_add(min(_ay, _by), -_r)));
