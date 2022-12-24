@@ -91,3 +91,7 @@ static inline q_fmt sqrtq(q_fmt x){
         }
         if(square == x) return tmp;
         // iter: goto next lower bit to get more precise sqrt value
+    }
+    return res << (Q/2);
+}
+
