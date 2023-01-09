@@ -34,13 +34,14 @@ static inline q_fmt q_add(q_fmt a, q_fmt b){
 static inline q_fmt q_mul(q_fmt a, q_fmt b){
     q_buf tmp = (q_buf)a * (q_buf)b;
 
-    // rounding
+    // rounding and resize
     tmp += (q_buf)(1<<(Q-1));
+    tmp >>= Q;
     
     // check overflow
     if(tmp > (q_buf)QFMT_MAX) return (q_fmt)QFMT_MAX;
     if(tmp * -1 >= (q_buf)QFMT_MIN) return (q_fmt)QFMT_MIN;
-    return (q_fmt)tmp >> Q;
+    return (q_fmt)tmp;
 }
 
 /* division of Q format value, no support rounding for now */
