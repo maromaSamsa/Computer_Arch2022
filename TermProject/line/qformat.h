@@ -72,6 +72,7 @@ static inline q_fmt ceilq(q_fmt x){
 /* return the nonnegative square root of x */
 static inline q_fmt sqrtq(q_fmt x){
     if(x <= 0) return 0;
+    if(x < I2Q(1) + (1<<(Q/2-1)) && x > I2Q(1) - (1<<(Q/2-1))) return I2Q(1);
     q_fmt res = 0;
     q_fmt bit = 1<<15;
 
