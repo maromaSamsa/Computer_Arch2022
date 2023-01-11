@@ -104,3 +104,73 @@ static inline q_fmt sqrtq(q_fmt x){
     return (offset >= 0)? res >> offset : res << (-offset) ;
 }
 
+static inline q_fmt cosHalf(q_fmt cosx){
+    return sqrtq((I2Q(1) + cosx) >> 1);
+}
+static inline q_fmt sinHalf(q_fmt cosx){
+    return sqrtq((I2Q(1) - cosx) >> 1);
+}
+
+static inline q_fmt _cosq(q_fmt theta){
+    // theta must be pi/2 to 0
+    q_fmt rad = PI_Q >> 1;
+    q_fmt cos_rad = 0;
+    q_fmt sin_rad = I2Q(1);
+
+    q_fmt cos_res = I2Q(1);
+    q_fmt sin_res = 0;
+
+    while(rad > 0 && theta != 0){
+        if(rad <= theta){
+            theta -= rad;
+            q_fmt tmp = q_mul(cos_res, cos_rad) - q_mul(sin_res, sin_rad);
+            sin_res = q_mul(sin_res, cos_rad) + q_mul(cos_res, sin_rad);
+            cos_res = tmp;
+        }
+        rad >>= 1;
+        sin_rad = sinHalf(cos_rad);
+        cos_rad = cosHalf(cos_rad);
+        //printf("rad: %f, cos: %f,sin: %f\n", Q2f(rad)*180/M_PI, Q2f(cos_rad), Q2f(sin_rad));
+        //printf("res-> cos: %f,sin: %f\n", Q2f(cos_res), Q2f(sin_res));
+    }
+    return cos_res;
+}
+
+static inline q_fmt cosq(q_fmt radius){
+    int region = (radius / (PI_Q >> 1)) & 0b11;
+    q_fmt theta = radius % (PI_Q >> 1);
+    if (region & 0b1) theta = (PI_Q >> 1) - theta;
+    return (region == 0b10 || region == 0b01)? -1 * _cosq(theta): _cosq(theta);
+}
+
+static inline q_fmt _sinq(q_fmt theta){
+    // theta must be pi/2 to 0
+    q_fmt rad = PI_Q >> 1;
+    q_fmt cos_rad = 0;
+    q_fmt sin_rad = I2Q(1);
+
+    q_fmt cos_res = I2Q(1);
+    q_fmt sin_res = 0;
+
+    while(rad > 0 && theta != 0){
+        if(rad <= theta){
+            theta -= rad;
+            q_fmt tmp = q_mul(cos_res, cos_rad) - q_mul(sin_res, sin_rad);
+            sin_res = q_mul(sin_res, cos_rad) + q_mul(cos_res, sin_rad);
+            cos_res = tmp;
+        }
+        rad >>= 1;
+        sin_rad = sinHalf(cos_rad);
+        cos_rad = cosHalf(cos_rad);
+        //printf("rad: %f, cos: %f,sin: %f\n", Q2f(rad)*180/M_PI, Q2f(cos_rad), Q2f(sin_rad));
+        //printf("res-> cos: %f,sin: %f\n", Q2f(cos_res), Q2f(sin_res));
+    }
+    return sin_res;
+}
+
+static inline q_fmt sinq(q_fmt radius){
+    int region = (radius / (PI_Q >> 1)) & 0b11;
+    q_fmt theta = radius % (PI_Q >> 1);
+    if (region & 0b1) theta = (PI_Q >> 1) - theta;
+    return (region & 0b10)? -1 * _sinq(theta): _sinq(theta);
+}
