@@ -174,3 +174,37 @@ static inline q_fmt sinq(q_fmt radius){
     if (region & 0b1) theta = (PI_Q >> 1) - theta;
     return (region & 0b10)? -1 * _sinq(theta): _sinq(theta);
 }
+
+/* get both sin and cos value in the same radius */
+static inline void sinAndcos(q_fmt radius, q_fmt *sin_t, q_fmt *cos_t){
+    int region = (radius / (PI_Q >> 1)) & 0b11;
+
+    // theta must be pi/2 to 0 and start from x-axis
+    q_fmt theta = radius % (PI_Q >> 1);
+    if (region & 0b1) theta = (PI_Q >> 1) - theta;
+
+    // start from cos(pi/2) and sin(pi/2)
+    radius = PI_Q >> 1;
+    q_fmt cos_rad = 0;
+    q_fmt sin_rad = I2Q(1);
+
+    // start from cos(0) and sin(0)
+    *cos_t = I2Q(1);
+    *sin_t = 0;
+
+    while(radius > 0){
+        if(radius <= theta){
+            theta -= radius;
+            q_fmt tmp = q_mul(*cos_t, cos_rad) - q_mul(*sin_t, sin_rad);
+            *sin_t = q_mul(*sin_t, cos_rad) + q_mul(*cos_t, sin_rad);
+            *cos_t = tmp;
+        }
+        if(theta == 0) break;
+        radius >>= 1;
+        sin_rad = sinHalf(cos_rad);
+        cos_rad = cosHalf(cos_rad);
+    }
+
+    if(region == 0b10 || region == 0b01) *cos_t *= -1;
+    if(region & 0b10) *sin_t *= -1;
+}

@@ -230,14 +230,14 @@ int main()
 {
     memset(img, 255, sizeof(img));
     q_fmt cx = W * (1<<(Q-1)), cy = H * (1<<(Q-1));
+    q_fmt ct, st;
     for (int j = 0; j < 5; j++) {
         q_fmt r1 = min(W, H) * q_mul((I2Q(j) + (1<<(Q-1))), f2Q(0.085f));
         q_fmt r2 = min(W, H) * q_mul((I2Q(j) + (3<<(Q-1))), f2Q(0.085f));
         q_fmt t = j * q_div(PI, I2Q(64));
         q_fmt r = (j + 1) * (1<<(Q-1));
         for (int i = 1; i <= 64; i++, t = q_add(t, q_mul(I2Q(2), q_div(PI, I2Q(64))))) {
-            q_fmt ct = cosq(t);
-            q_fmt st = sinq(t);
+            sinAndcos(t, &st, &ct);
             lineSDFAABB(q_add(cx, q_mul(r1, ct)), 
                         q_add(cy, -q_mul(r1, st)),
                         q_add(cx, q_mul(r2, ct)), 
