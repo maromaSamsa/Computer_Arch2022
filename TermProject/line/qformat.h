@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-#define Q (10)
+#define Q (20)
 #define PI_Q (1686629713>>(29-Q))
 
 typedef int32_t q_fmt;

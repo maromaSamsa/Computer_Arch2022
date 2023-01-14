@@ -150,7 +150,6 @@ void svpng(FILE *fp, unsigned w, unsigned h, const uint8_t *img, bool alpha)
     SVPNG_END(); /* IEND chunk {} */
 }
 
-#include <math.h>  // ceilf(), floorf(), fminf(), fmaxf(), sinf(), cosf(), sqrtf()
 #include <string.h>  // memset()
 #include "qformat.h"
 
